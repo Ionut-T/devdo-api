@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const app = express();
 
 const todoRoutes = require('./routes/todo');
+const doingRoutes = require('./routes/doing');
 
 // Connect to DB
 mongoose
@@ -36,5 +37,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/todo', todoRoutes);
+app.use('/api/doing', doingRoutes);
 
 module.exports = app;

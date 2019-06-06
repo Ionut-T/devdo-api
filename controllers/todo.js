@@ -1,8 +1,9 @@
-const Task = require('../models/Task');
+const ctrl = require('../models/Task');
+const Todo = ctrl.todo;
 
 // Create a new task and store it into DB
 exports.createTask = async (req, res) => {
-  const task = new Task({
+  const task = new Todo({
     title: req.body.title,
     content: req.body.content
   });
@@ -10,7 +11,11 @@ exports.createTask = async (req, res) => {
     const createdTask = await task.save();
     res.status(201).json({
       message: 'Task added successfully',
-      taskId: createdTask._id
+      task: {
+        id: createdTask._id,
+        title: createdTask.title,
+        content: createdTask.content
+      }
     });
   } catch (error) {
     res.status(500).json({
@@ -22,9 +27,9 @@ exports.createTask = async (req, res) => {
 // Get all tasks from DB
 exports.getTasks = async (req, res) => {
   try {
-    const documents = await Task.find();
+    const documents = await Todo.find();
     res.status(200).json({
-      message: 'Fetched tasks successfully',
+      message: 'Loading tasks successfully',
       tasks: documents
     });
   } catch (error) {
@@ -37,7 +42,7 @@ exports.getTasks = async (req, res) => {
 // Get a single task from DB
 exports.getTask = async (req, res) => {
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Todo.findById(req.params.id);
     if (task) {
       res.status(200).json(task);
     } else {
@@ -55,7 +60,7 @@ exports.getTask = async (req, res) => {
 // Delete task from DB
 exports.deleteTask = async (req, res) => {
   try {
-    await Task.deleteOne({ _id: req.params.id });
+    await Todo.deleteOne({ _id: req.params.id });
     res.status(200).json({
       message: 'Task deleted'
     });

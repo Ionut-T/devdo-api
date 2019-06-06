@@ -11,4 +11,6 @@ const taskSchema = mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Task', taskSchema);
+exports.todo = mongoose.model('Todo', taskSchema);
+exports.doing = mongoose.model('Doing', taskSchema);
+exports.done = mongoose.model('Done', taskSchema);
