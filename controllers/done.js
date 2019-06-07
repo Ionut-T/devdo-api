@@ -1,16 +1,16 @@
+/* eslint-disable no-console */
 const ctrl = require('../models/Task');
+const Done = ctrl.done;
 
-const Doing = ctrl.doing;
-
-// Add task in progress into DB
-exports.addDoingTask = async (req, res) => {
-  const doingTask = new Doing({
+// Add finished task into DB
+exports.addDoneTask = async (req, res) => {
+  const doneTask = new Done({
     id: req.body._id,
     title: req.body.title,
     content: req.body.content
   });
   try {
-    const movedTask = await doingTask.save();
+    const movedTask = await doneTask.save();
     res.status(200).json({
       message: 'Moved task successfully',
       task: {
@@ -19,6 +19,7 @@ exports.addDoingTask = async (req, res) => {
         content: movedTask.content
       }
     });
+    console.log(movedTask);
   } catch (error) {
     res.status(500).json({
       message: 'Moving task failed'
@@ -26,10 +27,10 @@ exports.addDoingTask = async (req, res) => {
   }
 };
 
-// Get all tasks in progress from DB
-exports.getDoingTasks = async (req, res) => {
+// Get all finished tasks from DB
+exports.getDoneTasks = async (req, res) => {
   try {
-    const documents = await Doing.find();
+    const documents = await Done.find();
     res.status(200).json({
       message: 'Loading tasks successfully',
       tasks: documents
@@ -41,10 +42,10 @@ exports.getDoingTasks = async (req, res) => {
   }
 };
 
-// Delete task in progress from DB
-exports.deleteDoingTask = async (req, res) => {
+// Delete finished task from DB
+exports.deleteDoneTask = async (req, res) => {
   try {
-    await Doing.deleteOne({ _id: req.params.id });
+    await Done.deleteOne({ _id: req.params.id });
     res.status(200).json({
       message: 'Task deleted'
     });
