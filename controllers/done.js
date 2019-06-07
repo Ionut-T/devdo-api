@@ -1,8 +1,7 @@
-/* eslint-disable no-console */
 const ctrl = require('../models/Task');
 const Done = ctrl.done;
 
-// Add finished task into DB
+// Add completed task into DB
 exports.addDoneTask = async (req, res) => {
   const doneTask = new Done({
     id: req.body._id,
@@ -19,7 +18,6 @@ exports.addDoneTask = async (req, res) => {
         content: movedTask.content
       }
     });
-    console.log(movedTask);
   } catch (error) {
     res.status(500).json({
       message: 'Moving task failed'
@@ -27,7 +25,7 @@ exports.addDoneTask = async (req, res) => {
   }
 };
 
-// Get all finished tasks from DB
+// Get all completed tasks from DB
 exports.getDoneTasks = async (req, res) => {
   try {
     const documents = await Done.find();
@@ -42,7 +40,40 @@ exports.getDoneTasks = async (req, res) => {
   }
 };
 
-// Delete finished task from DB
+// Get a single completed task from DB
+exports.getDoneTask = async (req, res) => {
+  try {
+    const task = await Done.findById(req.params.id);
+    if (task) {
+      res.status(200).json(task);
+    } else {
+      res.status(404).json({
+        message: 'Task not found'
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Loading task failed'
+    });
+  }
+};
+
+// Update completed task on DB
+exports.updateDoneTask = async (req, res) => {
+  try {
+    const updatedTask = await Done.updateOne({ _id: req.params.id }, req.body);
+    res.status(200).json({
+      message: 'Task updated',
+      task: updatedTask
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Updating task failed'
+    });
+  }
+};
+
+// Delete completed task from DB
 exports.deleteDoneTask = async (req, res) => {
   try {
     await Done.deleteOne({ _id: req.params.id });
