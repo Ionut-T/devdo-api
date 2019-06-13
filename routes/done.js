@@ -1,21 +1,23 @@
 const express = require('express');
+
 const doneController = require('../controllers/done');
+const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
 // POST /api/done/:id
-router.post('', doneController.addDoneTask);
+router.post('', checkAuth, doneController.addDoneTask);
 
 // GET /api/done
-router.get('', doneController.getDoneTasks);
+router.get('', checkAuth, doneController.getDoneTasks);
 
 // GET /api/done/:id
-router.get('/:id', doneController.getDoneTask);
+router.get('/:id', checkAuth, doneController.getDoneTask);
 
 // PUT /api/done/:id
-router.put('/:id', doneController.updateDoneTask);
+router.put('/:id', checkAuth, doneController.updateDoneTask);
 
 // DELETE /api/done/:id
-router.delete('/:id', doneController.deleteDoneTask);
+router.delete('/:id', checkAuth, doneController.deleteDoneTask);
 
 module.exports = router;
