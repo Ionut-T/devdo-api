@@ -7,7 +7,8 @@ exports.addDoingTask = async (req, res) => {
   const doingTask = new Doing({
     id: req.body._id,
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    creator: req.userData.userId
   });
   try {
     const movedTask = await doingTask.save();
@@ -29,7 +30,7 @@ exports.addDoingTask = async (req, res) => {
 // Get all tasks in progress from DB
 exports.getDoingTasks = async (req, res) => {
   try {
-    const documents = await Doing.find();
+    const documents = await Doing.find({ creator: req.userData.userId });
     res.status(200).json({
       message: 'Loading tasks successfully',
       tasks: documents

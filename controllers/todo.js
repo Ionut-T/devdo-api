@@ -5,7 +5,8 @@ const Todo = ctrl.todo;
 exports.createTask = async (req, res) => {
   const task = new Todo({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    creator: req.userData.userId
   });
   try {
     const createdTask = await task.save();
@@ -27,7 +28,7 @@ exports.createTask = async (req, res) => {
 // Get all tasks from DB
 exports.getTasks = async (req, res) => {
   try {
-    const documents = await Todo.find();
+    const documents = await Todo.find({ creator: req.userData.userId });
     res.status(200).json({
       message: 'Loading tasks successfully',
       tasks: documents
