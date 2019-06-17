@@ -5,7 +5,7 @@ const Todo = ctrl.todo;
 exports.createTask = async (req, res) => {
   const task = new Todo({
     title: req.body.title,
-    content: req.body.content,
+    description: req.body.description,
     creator: req.userData.userId
   });
   try {
@@ -15,7 +15,7 @@ exports.createTask = async (req, res) => {
       task: {
         id: createdTask._id,
         title: createdTask.title,
-        content: createdTask.content
+        description: createdTask.description
       }
     });
   } catch (error) {

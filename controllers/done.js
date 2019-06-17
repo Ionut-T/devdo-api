@@ -6,7 +6,7 @@ exports.addDoneTask = async (req, res) => {
   const doneTask = new Done({
     id: req.body._id,
     title: req.body.title,
-    content: req.body.content,
+    description: req.body.description,
     creator: req.userData.userId
   });
   try {
@@ -16,7 +16,7 @@ exports.addDoneTask = async (req, res) => {
       task: {
         id: movedTask._id,
         title: movedTask.title,
-        content: movedTask.content
+        description: movedTask.description
       }
     });
   } catch (error) {

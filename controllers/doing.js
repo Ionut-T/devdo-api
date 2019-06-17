@@ -7,7 +7,7 @@ exports.addDoingTask = async (req, res) => {
   const doingTask = new Doing({
     id: req.body._id,
     title: req.body.title,
-    content: req.body.content,
+    description: req.body.description,
     creator: req.userData.userId
   });
   try {
@@ -17,7 +17,7 @@ exports.addDoingTask = async (req, res) => {
       task: {
         id: movedTask._id,
         title: movedTask.title,
-        content: movedTask.content
+        description: movedTask.description
       }
     });
   } catch (error) {

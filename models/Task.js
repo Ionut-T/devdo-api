@@ -5,7 +5,7 @@ const taskSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  content: {
+  description: {
     type: String,
     required: true
   },
