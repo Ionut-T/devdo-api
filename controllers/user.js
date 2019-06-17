@@ -35,7 +35,7 @@ exports.loginUser = async (req, res) => {
     const result = await bcryptjs.compare(req.body.password, user.password);
     if (!result) {
       return res.status(401).json({
-        message: 'Authentication failed. This email is not registered.'
+        message: 'Authentication failed. The password you have entered is not correct.'
       });
     }
     const token = jwt.sign(
