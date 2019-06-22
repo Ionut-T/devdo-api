@@ -12,6 +12,8 @@ const doingRoutes = require('./routes/doing');
 const doneRoutes = require('./routes/done');
 const userRoutes = require('./routes/user');
 
+mongoose.set('useCreateIndex', true);
+
 // Connect to DB
 mongoose
   .connect(process.env.API_KEY, { useNewUrlParser: true })

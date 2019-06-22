@@ -6,6 +6,12 @@ const jwt = require('jsonwebtoken');
 // Create user
 exports.createUser = async (req, res) => {
   try {
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(401).json({
+        message: 'A user with this email address already exists.'
+      });
+    }
     const hash = await bcryptjs.hash(req.body.password, 10);
     const user = new User({
       email: req.body.email,
@@ -18,7 +24,7 @@ exports.createUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: 'A user with this email address already exists.'
+      message: 'An unknown error has occurred.'
     });
   }
 };
@@ -35,7 +41,8 @@ exports.loginUser = async (req, res) => {
     const result = await bcryptjs.compare(req.body.password, user.password);
     if (!result) {
       return res.status(401).json({
-        message: 'Authentication failed. The password you have entered is not correct.'
+        message:
+          'Authentication failed. The password you have entered is not correct.'
       });
     }
     const token = jwt.sign(
