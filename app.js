@@ -2,6 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const morgan = require('morgan');
+const compression = require('compression');
 
 const app = express();
 
@@ -10,11 +12,15 @@ const doingRoutes = require('./routes/doing');
 const doneRoutes = require('./routes/done');
 const userRoutes = require('./routes/user');
 
-mongoose.set('useCreateIndex', true);
+app.use(compression());
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 // Connect to DB
 mongoose
-  .connect(process.env.API_KEY, { useNewUrlParser: true })
+  .connect(process.env.API_KEY, { useNewUrlParser: true, useCreateIndex: true })
   .then(() => {
     console.log('Connected to database');
   })
