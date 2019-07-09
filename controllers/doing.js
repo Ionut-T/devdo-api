@@ -1,17 +1,14 @@
-const ctrl = require('../models/Task');
-
-const Doing = ctrl.doing;
+const { Doing } = require('../models/Task');
 
 // Add task in progress into DB
 exports.addDoingTask = async (req, res) => {
-  const doingTask = new Doing({
-    id: req.body._id,
-    title: req.body.title,
-    description: req.body.description,
-    creator: req.userData.userId
-  });
   try {
-    const movedTask = await doingTask.save();
+    const movedTask = await Doing.create({
+      id: req.body._id,
+      title: req.body.title,
+      description: req.body.description,
+      creator: req.userData.userId
+    });
     res.status(200).json({
       message: 'Moved task successfully',
       task: {
@@ -21,7 +18,7 @@ exports.addDoingTask = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(400).json({
       message: 'Moving task failed'
     });
   }
@@ -36,7 +33,7 @@ exports.getDoingTasks = async (req, res) => {
       tasks: documents
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(400).json({
       message: 'Loading tasks failed'
     });
   }
@@ -69,7 +66,7 @@ exports.updateDoingTask = async (req, res) => {
       task: updatedTask
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(400).json({
       message: 'Updating task failed'
     });
   }
@@ -79,11 +76,11 @@ exports.updateDoingTask = async (req, res) => {
 exports.deleteDoingTask = async (req, res) => {
   try {
     await Doing.deleteOne({ _id: req.params.id });
-    res.status(200).json({
+    res.status(204).json({
       message: 'Task deleted'
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(400).json({
       message: 'Deleting task failed'
     });
   }

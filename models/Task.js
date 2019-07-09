@@ -13,9 +13,19 @@ const taskSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now()
   }
 });
 
-exports.todo = mongoose.model('Todo', taskSchema);
-exports.doing = mongoose.model('Doing', taskSchema);
-exports.done = mongoose.model('Done', taskSchema);
+// Populate tasks with creator's information
+taskSchema.pre(/^find/, function(next) {
+  this.populate('creator');
+  next();
+});
+
+exports.Todo = mongoose.model('Todo', taskSchema);
+exports.Doing = mongoose.model('Doing', taskSchema);
+exports.Done = mongoose.model('Done', taskSchema);

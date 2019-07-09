@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
-const app = require('./app');
-const debug = require('debug')('devdo-api');
+require('dotenv').config();
 const http = require('http');
+const debug = require('debug')('devdo-api');
+const app = require('./app');
 
 const normalizePort = val => {
   var port = parseInt(val, 10);

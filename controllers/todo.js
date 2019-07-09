@@ -1,15 +1,13 @@
-const ctrl = require('../models/Task');
-const Todo = ctrl.todo;
+const { Todo } = require('../models/Task');
 
 // Create a new task and store it into DB
 exports.createTask = async (req, res) => {
-  const task = new Todo({
-    title: req.body.title,
-    description: req.body.description,
-    creator: req.userData.userId
-  });
   try {
-    const createdTask = await task.save();
+    const createdTask = await Todo.create({
+      title: req.body.title,
+      description: req.body.description,
+      creator: req.userData.userId
+    });
     res.status(201).json({
       message: 'Task added successfully',
       task: {
@@ -19,7 +17,7 @@ exports.createTask = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(400).json({
       message: 'Creating task failed'
     });
   }
@@ -77,11 +75,11 @@ exports.updateTask = async (req, res) => {
 exports.deleteTask = async (req, res) => {
   try {
     await Todo.deleteOne({ _id: req.params.id });
-    res.status(200).json({
+    res.status(204).json({
       message: 'Task deleted'
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(400).json({
       message: 'Deleting task failed'
     });
   }
