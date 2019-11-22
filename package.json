@@ -4,7 +4,7 @@
   "description": "devDo API",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production node server.js"
   },
   "author": "Ionut Traistaru",
@@ -22,7 +22,8 @@
     "validator": "^11.1.0"
   },
   "devDependencies": {
-    "eslint": "^5.16.0"
+    "eslint": "^5.16.0",
+    "nodemon": "^2.0.0"
   },
   "engines": {
     "node": "12.3.1"
