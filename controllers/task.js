@@ -8,7 +8,7 @@ exports.createTask = async (req, res) => {
       description: req.body.description,
       creator: req.userData.userId
     });
-    console.log('TCL: exports.createTask -> createdTask', createdTask);
+
     res.status(201).json({
       message: 'Task added successfully',
       task: {
@@ -28,6 +28,7 @@ exports.createTask = async (req, res) => {
 exports.getTasks = async (req, res) => {
   try {
     const documents = await Task.find({ creator: req.userData.userId });
+
     res.status(200).json({
       message: 'Loading tasks successfully',
       tasks: documents
@@ -43,6 +44,7 @@ exports.getTasks = async (req, res) => {
 exports.getTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
+
     if (task) {
       res.status(200).json(task);
     } else {
@@ -60,7 +62,8 @@ exports.getTask = async (req, res) => {
 // Update task on DB
 exports.updateTask = async (req, res) => {
   try {
-    const updatedTask = await Task.updateOne({ _id: req.params.id }, req.body);
+    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
+
     res.status(200).json({
       message: 'Task updated',
       task: updatedTask
@@ -75,7 +78,8 @@ exports.updateTask = async (req, res) => {
 // Delete task from DB
 exports.deleteTask = async (req, res) => {
   try {
-    await Task.deleteOne({ _id: req.params.id });
+    await Task.findByIdAndDelete(req.params.id);
+
     res.status(204).json({
       message: 'Task deleted'
     });
