@@ -5,13 +5,15 @@
     "es6": true,
     "node": true
   },
-  "extends": "eslint:recommended",
+  "parser": "@typescript-eslint/parser",
+  "extends": ["plugin:@typescript-eslint/recommended"],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
-  },
-  "parserOptions": {
-    "ecmaVersion": 2018
   },
   "rules": {
     "indent": ["error", 2],
@@ -28,6 +30,8 @@
         "object": true,
         "array": false
       }
-    ]
+    ],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

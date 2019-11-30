@@ -1,9 +1,10 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const uniqueValidator = require('mongoose-unique-validator');
-const bcrypt = require('bcryptjs');
+import { Schema, model, Model } from 'mongoose';
+import validator from 'validator';
+import uniqueValidator from 'mongoose-unique-validator';
+import bcrypt from 'bcryptjs';
+import { IUser } from '../models/user.model';
 
-const userSchema = mongoose.Schema({
+const userSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -21,7 +22,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(password) {
+      validator(password: string) {
         return password === this.password;
       }
     }
@@ -36,19 +37,21 @@ const userSchema = mongoose.Schema({
 userSchema.plugin(uniqueValidator);
 
 // Hash password
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function(this: IUser, next) {
   if (!this.isModified('password')) {
     return next();
   }
 
-  this.password = await bcrypt.hash(this.password, 12);
-  this.confirmPassword = undefined;
+  const user = this;
+
+  user.password = await bcrypt.hash(user.password, 12);
+  user.confirmPassword = undefined;
 
   next();
 });
 
 // Compare passwords
-userSchema.methods.checkPassword = async (enteredPassword, userPassword) =>
+userSchema.methods.checkPassword = async (enteredPassword: string, userPassword: string) =>
   await bcrypt.compare(enteredPassword, userPassword);
 
-module.exports = mongoose.model('User', userSchema);
+export const User: Model<IUser> = model('User', userSchema);

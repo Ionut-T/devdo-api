@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import { Schema, model, Model } from 'mongoose';
+import { ITask } from '../models/task.model';
 
-const taskSchema = mongoose.Schema({
+const taskSchema = new Schema({
   title: {
     type: String,
     required: true
@@ -15,7 +16,7 @@ const taskSchema = mongoose.Schema({
     default: 'todo'
   },
   creator: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
@@ -26,11 +27,10 @@ const taskSchema = mongoose.Schema({
 });
 
 // Populate tasks with creator's information
-taskSchema.pre(/^find/, function(next) {
-  this.populate('creator');
+taskSchema.pre(/^find/, function (next) {
+  const task = this as any;
+  task.populate('creator');
   next();
 });
 
-const Task = mongoose.model('Todo', taskSchema);
-
-module.exports = Task;
+export const Task: Model<ITask> = model<ITask>('Task', taskSchema);
