@@ -1,9 +1,11 @@
 import { Task } from '../schemas/task.schema';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import asyncWrapper from '../utils/async-wrapper';
+import Err from '../utils/error-handler';
 
 // Create a new task and store it into DB
-export const create = async (req: Request, res: Response): Promise<Response> => {
-  try {
+export const create = asyncWrapper(
+  async (req: Request, res: Response): Promise<Response> => {
     const task = await Task.create({
       title: req.body.title,
       description: req.body.description,
@@ -11,63 +13,53 @@ export const create = async (req: Request, res: Response): Promise<Response> => 
     });
 
     return res.status(201).json({ message: 'Task added successfully', task });
-  } catch (error) {
-    res.status(400).json({ message: 'Creating task failed' });
   }
-};
+);
 
 // Get all tasks from DB
-export const findAll = async (req: Request, res: Response): Promise<Response> => {
-  try {
+export const findAll = asyncWrapper(
+  async (req: Request, res: Response): Promise<Response> => {
     const tasks = await Task.find({ creator: (req as any).userData.userId });
 
-    return res.status(200).json({ message: 'Loading tasks successfully', tasks });
-  } catch (error) {
-    res.status(500).json({ message: 'Loading tasks failed' });
+    return res.status(200).json({ message: 'Loading tasks successfully', results: tasks.length, tasks });
   }
-};
+);
 
 // Get a single task from DB
-export const findOne = async (req: Request, res: Response): Promise<Response> => {
-  try {
+export const findOne = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
     const task = await Task.findById(req.params.id);
 
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
+      return next(new Err('Task not found', 404));
     }
 
-    res.status(200).json(task);
-  } catch (error) {
-    res.status(500).json({ message: 'Loading task failed' });
+    return res.status(200).json(task);
   }
-};
+);
 
 // Update task on DB
-export const updateOne = async (req: Request, res: Response): Promise<Response> => {
-  try {
+export const updateOne = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
     const task = await Task.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
 
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
+      return next(new Err('Task not found', 404));
     }
 
     res.status(200).json({ message: 'Task updated', task });
-  } catch (error) {
-    res.status(500).json({ message: 'Updating task failed' });
   }
-};
+);
 
 // Delete task from DB
-export const deleteOne = async (req: Request, res: Response): Promise<Response> => {
-  try {
+export const deleteOne = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
     const task = await Task.findByIdAndDelete(req.params.id);
 
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
+      return next(new Err('Task not found', 404));
     }
 
     res.status(204).json({ message: 'Task deleted' });
-  } catch (error) {
-    res.status(400).json({ message: 'Deleting task failed' });
   }
-};
+);

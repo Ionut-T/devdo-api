@@ -8,12 +8,15 @@ import helmet from 'helmet';
 import { MongoDatabase } from './database/mongo.database';
 import { TaskRouter } from './routes/task.routes';
 import { UserRouter } from './routes/user.routes';
+import Err from './utils/error-handler';
+import { ErrorController } from './controllers/error.controller';
 
 export class Application {
   public app: express.Application;
   private db = new MongoDatabase().connection;
   private taskRouter: Router;
   private userRouter: Router;
+  private errorController: ErrorController;
 
   constructor() {
     this.app = express();
@@ -39,10 +42,14 @@ export class Application {
     this.app.use(bodyParser.json());
     this.app.use(helmet());
     this.app.use(compression());
+    this.app.use(this.errorController.errorHandler);
   }
 
   private routes(): void {
     this.app.use('/api/v2/tasks', this.taskRouter);
     this.app.use('/api/v2/user', this.userRouter);
+    this.app.all('*', (req, _res, next) => {
+      next(new Err(`Can't find ${req.originalUrl}!`, 404));
+    });
   }
 }
