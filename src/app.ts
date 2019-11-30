@@ -23,6 +23,7 @@ export class Application {
     this.db();
     this.taskRouter = new TaskRouter().router;
     this.userRouter = new UserRouter().router;
+    this.errorController = new ErrorController();
     this.config();
     this.routes();
   }
