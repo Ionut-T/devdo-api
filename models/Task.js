@@ -9,6 +9,11 @@ const taskSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  status: {
+    type: String,
+    enum: ['todo', 'doing', 'done'],
+    default: 'todo'
+  },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -26,6 +31,6 @@ taskSchema.pre(/^find/, function(next) {
   next();
 });
 
-exports.Todo = mongoose.model('Todo', taskSchema);
-exports.Doing = mongoose.model('Doing', taskSchema);
-exports.Done = mongoose.model('Done', taskSchema);
+const Task = mongoose.model('Todo', taskSchema);
+
+module.exports = Task;

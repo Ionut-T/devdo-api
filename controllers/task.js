@@ -1,13 +1,14 @@
-const { Todo } = require('../models/Task');
+const Task = require('../models/Task');
 
 // Create a new task and store it into DB
 exports.createTask = async (req, res) => {
   try {
-    const createdTask = await Todo.create({
+    const createdTask = await Task.create({
       title: req.body.title,
       description: req.body.description,
       creator: req.userData.userId
     });
+
     res.status(201).json({
       message: 'Task added successfully',
       task: {
@@ -26,7 +27,8 @@ exports.createTask = async (req, res) => {
 // Get all tasks from DB
 exports.getTasks = async (req, res) => {
   try {
-    const documents = await Todo.find({ creator: req.userData.userId });
+    const documents = await Task.find({ creator: req.userData.userId });
+
     res.status(200).json({
       message: 'Loading tasks successfully',
       tasks: documents
@@ -41,7 +43,8 @@ exports.getTasks = async (req, res) => {
 // Get a single task from DB
 exports.getTask = async (req, res) => {
   try {
-    const task = await Todo.findById(req.params.id);
+    const task = await Task.findById(req.params.id);
+
     if (task) {
       res.status(200).json(task);
     } else {
@@ -59,7 +62,8 @@ exports.getTask = async (req, res) => {
 // Update task on DB
 exports.updateTask = async (req, res) => {
   try {
-    const updatedTask = await Todo.updateOne({ _id: req.params.id }, req.body);
+    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
+
     res.status(200).json({
       message: 'Task updated',
       task: updatedTask
@@ -74,7 +78,8 @@ exports.updateTask = async (req, res) => {
 // Delete task from DB
 exports.deleteTask = async (req, res) => {
   try {
-    await Todo.deleteOne({ _id: req.params.id });
+    await Task.findByIdAndDelete(req.params.id);
+
     res.status(204).json({
       message: 'Task deleted'
     });

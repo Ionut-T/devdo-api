@@ -7,9 +7,7 @@ const compression = require('compression');
 
 const app = express();
 
-const todoRoutes = require('./routes/todo');
-const doingRoutes = require('./routes/doing');
-const doneRoutes = require('./routes/done');
+const taskRoutes = require('./routes/task');
 const userRoutes = require('./routes/user');
 
 app.use(compression());
@@ -20,7 +18,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Connect to DB
 mongoose
-  .connect(process.env.API_KEY, { useNewUrlParser: true, useCreateIndex: true })
+  .connect(process.env.API_KEY_DEV, { useNewUrlParser: true, useCreateIndex: true })
   .then(() => {
     console.log('Connected to database');
   })
@@ -33,20 +31,12 @@ app.use(bodyParser.json());
 // Set CORS
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PATCH, PUT, DELETE, OPTIONS'
-  );
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
   next();
 });
 
-app.use('/api/todo', todoRoutes);
-app.use('/api/doing', doingRoutes);
-app.use('/api/done', doneRoutes);
-app.use('/api/user', userRoutes);
+app.use('/api/v2/tasks', taskRoutes);
+app.use('/api/v2/user', userRoutes);
 
 module.exports = app;
