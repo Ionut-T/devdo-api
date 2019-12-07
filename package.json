@@ -15,7 +15,8 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-    "copy-static-assets": "ts-node copyStaticAssets.ts"
+    "copy-static-assets": "ts-node copyStaticAssets.ts",
+    "empty-db": "ts-node emptyDb.ts --all"
   },
   "author": "Ionut Traistaru",
   "license": "ISC",
