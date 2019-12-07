@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+import path from 'path';
 import express, { Router, Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
@@ -43,6 +43,8 @@ export class Application {
     this.app.use(bodyParser.json());
     this.app.use(helmet());
     this.app.use(compression());
+    this.app.set('view engine', 'pug');
+    this.app.set('views', path.join(__dirname, 'email-templates'));
     this.app.use(this.errorController.errorHandler);
   }
 

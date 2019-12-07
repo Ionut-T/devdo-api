@@ -1,0 +1,17 @@
+extends base
+
+block content
+    p Hi,
+    p Welcome to devDo!
+    p Click the button below to confirm your email.
+    table.btn.btn-primary(role='presentation' border='0' cellpadding='0' cellspacing='0')
+        tbody
+            tr
+                td(align='left')
+                    table(role='presentation' border='0' cellpadding='0' cellspacing='0')
+                        tbody
+                            tr
+                                td
+                                    a(href=`${url}`, target='_blank') Confirm email!
+    p Regards,
+    p devDo Team
