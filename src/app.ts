@@ -7,7 +7,7 @@ import helmet from 'helmet';
 
 import { MongoDatabase } from './database/mongo.database';
 import { TaskRouter } from './routes/task.routes';
-import { UserRouter } from './routes/user.routes';
+import { AuthRouter } from './routes/auth.routes';
 import Err from './utils/error-handler';
 import { ErrorController } from './controllers/error.controller';
 
@@ -15,14 +15,14 @@ export class Application {
   public app: express.Application;
   private db = new MongoDatabase().connection;
   private taskRouter: Router;
-  private userRouter: Router;
+  private authRouter: Router;
   private errorController: ErrorController;
 
   constructor() {
     this.app = express();
     this.db();
     this.taskRouter = new TaskRouter().router;
-    this.userRouter = new UserRouter().router;
+    this.authRouter = new AuthRouter().router;
     this.errorController = new ErrorController();
     this.config();
     this.routes();
@@ -50,9 +50,7 @@ export class Application {
 
   private routes(): void {
     this.app.use('/api/v2/tasks', this.taskRouter);
-    this.app.use('/api/v2/user', this.userRouter);
-    this.app.all('*', (req, _res, next) => {
-      next(new Err(`Can't find ${req.originalUrl}!`, 404));
-    });
+    this.app.use('/api/v2/auth', this.authRouter);
+    this.app.all('*', (req, _res, next) => next(new Err(`Can't find ${req.originalUrl}!`, 404)));
   }
 }

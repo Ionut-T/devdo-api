@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { signup, login } from '../controllers/user.controller';
+import { signup, login } from '../controllers/auth.controller';
 
-export class UserRouter {
+export class AuthRouter {
   public router: Router;
 
   constructor() {
@@ -10,7 +10,7 @@ export class UserRouter {
   }
 
   private routes(): void {
-    // /api/v2/user
+    // /api/v2/auth
     this.router.post('/signup', signup);
     this.router.post('/login', login);
   }
