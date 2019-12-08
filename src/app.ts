@@ -10,12 +10,14 @@ import { TaskRouter } from './routes/task.routes';
 import { AuthRouter } from './routes/auth.routes';
 import Err from './utils/error-handler';
 import { ErrorController } from './controllers/error.controller';
+import { UserRouter } from './routes/user.routes';
 
 export class Application {
   public app: express.Application;
   private db = new MongoDatabase().connection;
   private taskRouter: Router;
   private authRouter: Router;
+  private userRouter: Router;
   private errorController: ErrorController;
 
   constructor() {
@@ -23,6 +25,7 @@ export class Application {
     this.db();
     this.taskRouter = new TaskRouter().router;
     this.authRouter = new AuthRouter().router;
+    this.userRouter = new UserRouter().router;
     this.errorController = new ErrorController();
     this.config();
     this.routes();
@@ -51,6 +54,7 @@ export class Application {
   private routes(): void {
     this.app.use('/api/v2/tasks', this.taskRouter);
     this.app.use('/api/v2/auth', this.authRouter);
+    this.app.use('/api/v2/user', this.userRouter);
     this.app.all('*', (req, _res, next) => next(new Err(`Can't find ${req.originalUrl}!`, 404)));
   }
 }
