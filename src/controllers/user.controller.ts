@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../schemas/user.schema';
 import asyncWrapper from '../utils/async-wrapper';
-import Err from '../utils/error-handler';
+import { Err } from '../utils/error-handler';
 
 export const update = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {

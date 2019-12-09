@@ -1,4 +1,4 @@
-class Err extends Error {
+export class Err extends Error {
   statusCode: number;
   status: string;
   isOperational: boolean;
@@ -13,5 +13,3 @@ class Err extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
 }
-
-export default Err;

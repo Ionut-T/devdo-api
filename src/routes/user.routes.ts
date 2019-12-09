@@ -11,6 +11,6 @@ export class UserRouter {
 
   private routes(): void {
     // /api/v2/user
-    this.router.post('/:id', update);
+    this.router.put('/:id', update);
   }
 }

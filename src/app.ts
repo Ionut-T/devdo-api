@@ -8,9 +8,9 @@ import helmet from 'helmet';
 import { MongoDatabase } from './database/mongo.database';
 import { TaskRouter } from './routes/task.routes';
 import { AuthRouter } from './routes/auth.routes';
-import Err from './utils/error-handler';
-import { ErrorController } from './controllers/error.controller';
 import { UserRouter } from './routes/user.routes';
+import { Err } from './utils/error-handler';
+import errorController from './controllers/error.controller';
 
 export class Application {
   public app: express.Application;
@@ -18,7 +18,6 @@ export class Application {
   private taskRouter: Router;
   private authRouter: Router;
   private userRouter: Router;
-  private errorController: ErrorController;
 
   constructor() {
     this.app = express();
@@ -26,9 +25,9 @@ export class Application {
     this.taskRouter = new TaskRouter().router;
     this.authRouter = new AuthRouter().router;
     this.userRouter = new UserRouter().router;
-    this.errorController = new ErrorController();
     this.config();
     this.routes();
+    this.errorHandling();
   }
 
   private config(): void {
@@ -48,7 +47,6 @@ export class Application {
     this.app.use(compression());
     this.app.set('view engine', 'pug');
     this.app.set('views', path.join(__dirname, 'email-templates'));
-    this.app.use(this.errorController.errorHandler);
   }
 
   private routes(): void {
@@ -56,5 +54,9 @@ export class Application {
     this.app.use('/api/v2/auth', this.authRouter);
     this.app.use('/api/v2/user', this.userRouter);
     this.app.all('*', (req, _res, next) => next(new Err(`Can't find ${req.originalUrl}!`, 404)));
+  }
+
+  private errorHandling(): void {
+    this.app.use(errorController);
   }
 }
