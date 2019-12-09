@@ -32,7 +32,12 @@ export const login = asyncWrapper(
 
     const user = await User.findOne({ email }).select('+password');
 
-    if (!user || !user.checkPassword(password, user.password)) {
+    if (!user) {
+      return next(new Err('Authentication failed! Email or password is incorrect.', 401));
+    }
+
+    const isCorrectPassword = await user.checkPassword(password, user.password);
+    if (!isCorrectPassword) {
       return next(new Err('Authentication failed! Email or password is incorrect.', 401));
     }
 
