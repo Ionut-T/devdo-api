@@ -10,14 +10,14 @@ import { JWT_SECRET, VERIFY_EMAIL_URL } from '../utils/config';
 // Create user
 export const signup = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { firstName, lastName, email, password, confirmPassword } = req.body;
+    const { firstName, email, password, confirmPassword } = req.body;
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return next(new Err('Authentication failed! A user with this email address already exists.', 401));
     }
 
-    const user = await User.create({ firstName, lastName, email, password, confirmPassword });
+    const user = await User.create({ firstName, email, password, confirmPassword });
 
     const token = await Token.create({ userId: user._id, token: user.generateToken() });
 
@@ -29,7 +29,6 @@ export const signup = asyncWrapper(
       user: {
         id: user._id,
         firstName: user.firstName,
-        lastName: user.lastName,
         email: user.email,
         isVerified: user.isVerified
       }
