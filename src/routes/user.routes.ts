@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { signup, login } from '../controllers/user.controller';
+import { update } from '../controllers/user.controller';
 
 export class UserRouter {
   public router: Router;
@@ -11,7 +11,6 @@ export class UserRouter {
 
   private routes(): void {
     // /api/v2/user
-    this.router.post('/signup', signup);
-    this.router.post('/login', login);
+    this.router.put('/:id', update);
   }
 }

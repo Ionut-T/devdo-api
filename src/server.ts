@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
 require('dotenv').config();
 import http from 'http';
-const debug = require('debug')('devdo-api');
+import Debug from 'debug';
 import { Application } from './app';
 
+const debug = Debug('devdo-api');
 const app = new Application().app;
 
 const normalizePort = (val: any) => {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -22,27 +23,27 @@ const normalizePort = (val: any) => {
   return false;
 };
 
+const server = http.createServer(app);
+const port = normalizePort(process.env.PORT || '3000');
+
 const onError = (error: any) => {
   if (error.syscall !== 'listen') {
     throw error;
   }
   const bind = typeof port === 'string' ? 'pipe ' + port : 'port ' + port;
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
+  case 'EACCES':
+    console.error(bind + ' requires elevated privileges');
+    process.exit(1);
+    break;
+  case 'EADDRINUSE':
+    console.error(bind + ' is already in use');
+    process.exit(1);
+    break;
+  default:
+    throw error;
   }
 };
-
-const server = http.createServer(app);
-const port = normalizePort(process.env.PORT || '3000');
 
 const onListening = () => {
   server.address();

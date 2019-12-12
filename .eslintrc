@@ -1,19 +1,9 @@
 {
-  "env": {
-    "browser": true,
-    "commonjs": true,
-    "es6": true,
-    "node": true
-  },
   "parser": "@typescript-eslint/parser",
   "extends": ["plugin:@typescript-eslint/recommended"],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
-  },
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
   },
   "rules": {
     "indent": ["error", 2],
@@ -24,14 +14,10 @@
     "eol-last": ["warn", "always"],
     "no-trailing-spaces": ["warn", { "ignoreComments": true }],
     "no-console": "warn",
-    "prefer-destructuring": [
-      "warn",
-      {
-        "object": true,
-        "array": false
-      }
-    ],
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "prefer-destructuring": ["warn", { "object": true, "array": false }],
+    "@typescript-eslint/no-inferrable-types": ["warn", { "ignoreParameters": true }],
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/interface-name-prefix": { "prefixWithI": "always" },
+    "@typescript-eslint/no-this-alias": "off"
   }
 }
