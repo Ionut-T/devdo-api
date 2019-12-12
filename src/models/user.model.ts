@@ -7,5 +7,9 @@ export interface IUser extends Document {
   password: string;
   confirmPassword: string;
   isVerified: boolean;
+  token: string;
+  tokenCreatedAt: Date;
+
   checkPassword: (comparePassword: string, password: string) => Promise<boolean>;
+  generateToken: () => string;
 }

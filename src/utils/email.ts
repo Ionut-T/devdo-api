@@ -2,30 +2,36 @@ import nodemailer from 'nodemailer';
 import pug from 'pug';
 import htmlToText from 'html-to-text';
 import Mail from 'nodemailer/lib/mailer';
+import sgMail from '@sendgrid/mail';
+import { DEV_ENV, EMAIL, SENDGRID_API_KEY } from './config';
 
 export class Email {
-  public async sendConfirmationEmail(email: string): Promise<void> {
-    await this.sendEmail('confirmation', 'Welcome to devDo!', email);
+  public async sendVerificationEmail(email: string, firstName: string, url: string): Promise<void> {
+    await this.sendEmail('verification', 'Verify your email!', email, firstName, url);
   }
 
   private createMailTransport(): Mail {
-    if (process.env.NODE_ENV === 'development') {
-      return nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: Number(process.env.EMAIL_PORT),
-        auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD
-        },
-        tls: { rejectUnauthorized: false }
-      });
-    }
+    return nodemailer.createTransport({
+      host: EMAIL.host,
+      port: EMAIL.port,
+      auth: {
+        user: EMAIL.user,
+        pass: EMAIL.password
+      },
+      tls: { rejectUnauthorized: false }
+    });
   }
 
   // Send the email.
-  private async sendEmail(template: string, subject: string, email: string): Promise<void> {
+  private async sendEmail(
+    template: string,
+    subject: string,
+    email: string,
+    firstName: string,
+    url: string
+  ): Promise<void> {
     // Render HTML based on a pug template.
-    const html = pug.renderFile(`${__dirname}./../email-templates/${template}.pug`, { subject });
+    const html = pug.renderFile(`${__dirname}./../email-templates/${template}.pug`, { subject, firstName, url });
 
     // Email options.
     const options = {
@@ -37,6 +43,11 @@ export class Email {
     };
 
     // Create a transport and send email.
-    await this.createMailTransport().sendMail(options);
+    if (DEV_ENV) {
+      return await this.createMailTransport().sendMail(options);
+    }
+
+    sgMail.setApiKey(SENDGRID_API_KEY);
+    sgMail.send(options);
   }
 }
