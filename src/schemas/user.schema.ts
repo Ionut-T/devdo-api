@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Schema, model, Model } from 'mongoose';
 import validator from 'validator';
 import uniqueValidator from 'mongoose-unique-validator';
@@ -5,6 +6,10 @@ import bcrypt from 'bcryptjs';
 import { IUser } from '../models/user.model';
 
 const userSchema = new Schema({
+  firstName: {
+    type: String,
+    trim: true
+  },
   email: {
     type: String,
     required: true,
@@ -26,6 +31,10 @@ const userSchema = new Schema({
         return password === this.password;
       }
     }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   },
   createdAt: {
     type: Date,
@@ -53,5 +62,9 @@ userSchema.pre('save', async function(this: IUser, next) {
 // Compare passwords
 userSchema.methods.checkPassword = async (enteredPassword: string, userPassword: string) =>
   await bcrypt.compare(enteredPassword, userPassword);
+
+userSchema.methods.generateToken = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
 
 export const User: Model<IUser> = model('User', userSchema);

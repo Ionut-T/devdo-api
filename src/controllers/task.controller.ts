@@ -1,7 +1,7 @@
 import { Task } from '../schemas/task.schema';
 import { Request, Response, NextFunction } from 'express';
 import asyncWrapper from '../utils/async-wrapper';
-import Err from '../utils/error-handler';
+import { Err } from '../utils/error-handler';
 
 // Create a new task and store it into DB
 export const create = asyncWrapper(
