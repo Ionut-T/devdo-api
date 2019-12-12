@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { signup, login, verifyEmailToken } from '../controllers/auth.controller';
+import { signup, login, verifyEmailToken, resendVerificationToken } from '../controllers/auth.controller';
 
 export class AuthRouter {
   public router: Router;
@@ -14,5 +14,6 @@ export class AuthRouter {
     this.router.post('/signup', signup);
     this.router.post('/login', login);
     this.router.get('/:token', verifyEmailToken);
+    this.router.post('/token', resendVerificationToken);
   }
 }

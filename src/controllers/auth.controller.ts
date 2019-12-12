@@ -9,7 +9,7 @@ import { JWT_SECRET, VERIFY_EMAIL_URL } from '../utils/config';
 
 // Create user
 export const signup = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { firstName, lastName, email, password, confirmPassword } = req.body;
     const existingUser = await User.findOne({ email });
 
@@ -39,7 +39,7 @@ export const signup = asyncWrapper(
 
 // Log in user
 export const login = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select('+password');
@@ -77,6 +77,28 @@ export const verifyEmailToken = asyncWrapper(
     if (user.isVerified) {
       return next(new Err('This account has already been verified.', 400));
     }
+
+    res.status(200).json({ token });
+  }
+);
+
+// Resend verification token.
+export const resendVerificationToken = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      return next(new Err('No user with this email address exists.', 400));
+    }
+
+    if (user.isVerified) {
+      return next(new Err('This account has already been verified.', 400));
+    }
+
+    const token = await Token.create({ userId: user._id, token: user.generateToken() });
+
+    const url = `${VERIFY_EMAIL_URL}/${token.token}`;
+    await new Email().sendVerificationEmail(user.email, user.firstName, url);
 
     res.status(200).json({ token });
   }
