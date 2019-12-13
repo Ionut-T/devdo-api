@@ -31,7 +31,7 @@ export class Email {
     url: string
   ): Promise<void> {
     // Render HTML based on a pug template.
-    const html = pug.renderFile(`${__dirname}./../email-templates/${template}.pug`, { subject, firstName, url });
+    const html = pug.renderFile(`${__dirname}/../email-templates/${template}.pug`, { subject, firstName, url });
 
     // Email options.
     const options = {

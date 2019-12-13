@@ -2,6 +2,8 @@ import { CastError, Error } from 'mongoose';
 import { MongoError } from 'mongodb';
 import { Request, Response, NextFunction } from 'express';
 import { Err } from '../utils/error-handler';
+import { ENVIRONMENT } from '../utils/config';
+import logger from '../utils/logger';
 
 type ValidationError = Error.ValidationError;
 
@@ -49,21 +51,22 @@ const sendErrorProd = (err: any, res: Response) => {
     // Programming or other unknown error.
   } else {
     // Log error.
-    console.error('ERROR', err);
+    logger.error('ERROR', err);
 
     // Send generic message.
     res.status(500).json({ status: 'error', message: 'Something went wrong!' });
   }
 };
 
-const errorController = (err: any, _req: Request, res: Response, _next: NextFunction) => {
+const errorController = (err: any, req: Request, res: Response, _next: NextFunction) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  if (process.env.NODE_ENV === 'development') {
+  if (ENVIRONMENT === 'development') {
     sendErrorDev(err, res);
-  } else if (process.env.NODE_ENV === 'production') {
+  } else if (ENVIRONMENT === 'production') {
     let error = { ...err };
+    error.message = err.message;
 
     if (error.name === 'CastError') {
       error = handleCastErrorDB(error);
