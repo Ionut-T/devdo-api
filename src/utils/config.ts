@@ -24,7 +24,7 @@ if (!MONGODB_URI) {
   process.exit(1);
 }
 
-export const JWT_SECRET = process.env.JWT_SECRET;
+export const { JWT_SECRET } = process.env;
 
 export const EMAIL: MailTrap = {
   host: process.env.EMAIL_HOST,
@@ -33,6 +33,12 @@ export const EMAIL: MailTrap = {
   password: process.env.EMAIL_PASSWORD
 };
 
+export const { SENDGRID_API_KEY } = process.env;
+
+export const { EMAIL_FROM } = process.env;
+
 export const VERIFY_EMAIL_URL = DEV_ENV ? process.env.VERIFY_EMAIL_DEV : process.env.VERIFY_EMAIL_PROD;
 
-export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+export const RESET_PASSWORD_URL = DEV_ENV
+  ? process.env.RESET_PASSWORD_EMAIL_DEV
+  : process.env.RESET_PASSWORD_EMAIL_PROD;

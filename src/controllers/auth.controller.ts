@@ -5,9 +5,9 @@ import asyncWrapper from '../utils/async-wrapper';
 import { Err } from '../utils/error-handler';
 import { Email } from '../utils/email';
 import { Token } from '../schemas/token.schema';
-import { JWT_SECRET, VERIFY_EMAIL_URL } from '../utils/config';
+import { JWT_SECRET, VERIFY_EMAIL_URL, RESET_PASSWORD_URL } from '../utils/config';
 
-// Create user
+// Create user.
 export const signup = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { firstName, email, password, confirmPassword } = req.body;
@@ -36,7 +36,7 @@ export const signup = asyncWrapper(
   }
 );
 
-// Log in user
+// Log in user.
 export const login = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password } = req.body;
@@ -100,5 +100,45 @@ export const resendVerificationToken = asyncWrapper(
     await new Email().sendVerificationEmail(user.email, user.firstName, url);
 
     res.status(200).json({ token });
+  }
+);
+
+// Request to reset password.
+export const forgotPassword = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      return next(new Err('No user with this email address exists.', 400));
+    }
+
+    const token = await Token.create({ userId: user._id, token: user.generateToken() });
+
+    const url = `${RESET_PASSWORD_URL}/${token.token}`;
+    await new Email().sendResetPasswordEmail(user.email, user.firstName, url);
+
+    res.status(200).json({ token });
+  }
+);
+
+// Reset password.
+export const resetPassword = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const token = await Token.findOne({ token: req.params.token });
+
+    if (!token) {
+      return next(new Err('Your request to reset your password has expired.', 400));
+    }
+
+    const user = await User.findById(token.userId).select('+password');
+
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+
+    await user.save();
+
+    await token.remove();
+
+    res.status(200).json({ message: 'Password has been updated!' });
   }
 );
