@@ -27,7 +27,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
     validate: {
-      validator(password: string) {
+      validator(password: string): boolean {
         return password === this.password;
       }
     }
@@ -60,11 +60,9 @@ userSchema.pre('save', async function(this: IUser, next) {
 });
 
 // Compare passwords
-userSchema.methods.checkPassword = async (enteredPassword: string, userPassword: string) =>
+userSchema.methods.checkPassword = async (enteredPassword: string, userPassword: string): Promise<boolean> =>
   await bcrypt.compare(enteredPassword, userPassword);
 
-userSchema.methods.generateToken = () => {
-  return crypto.randomBytes(32).toString('hex');
-};
+userSchema.methods.generateToken = (): string => crypto.randomBytes(32).toString('hex');
 
 export const User: Model<IUser> = model('User', userSchema);

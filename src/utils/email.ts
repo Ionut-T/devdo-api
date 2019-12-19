@@ -3,11 +3,15 @@ import pug from 'pug';
 import htmlToText from 'html-to-text';
 import Mail from 'nodemailer/lib/mailer';
 import sgMail from '@sendgrid/mail';
-import { DEV_ENV, EMAIL, SENDGRID_API_KEY } from './config';
+import { DEV_ENV, EMAIL, SENDGRID_API_KEY, EMAIL_FROM } from './config';
 
 export class Email {
   public async sendVerificationEmail(email: string, firstName: string, url: string): Promise<void> {
     await this.sendEmail('verification', 'Verify your email!', email, firstName, url);
+  }
+
+  public async sendResetPasswordEmail(email: string, firstName: string, url: string): Promise<void> {
+    await this.sendEmail('reset-password', 'Reset password!', email, firstName, url);
   }
 
   private createMailTransport(): Mail {
@@ -31,11 +35,11 @@ export class Email {
     url: string
   ): Promise<void> {
     // Render HTML based on a pug template.
-    const html = pug.renderFile(`${__dirname}/../email-templates/${template}.pug`, { subject, firstName, url });
+    const html = pug.renderFile(`${__dirname}/../email-templates/${template}.pug`, { subject, firstName, url, email });
 
     // Email options.
     const options = {
-      from: `devDo <${process.env.EMAIL_FROM}>`,
+      from: `devDo <${EMAIL_FROM}>`,
       to: email,
       subject,
       html,
