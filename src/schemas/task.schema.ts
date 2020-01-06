@@ -1,7 +1,7 @@
 import { Schema, model, Model } from 'mongoose';
 import { ITask } from '../models/task.model';
 
-const taskSchema = new Schema({
+export const taskSchema = new Schema({
   title: {
     type: String,
     required: true
@@ -15,6 +15,11 @@ const taskSchema = new Schema({
     enum: ['todo', 'doing', 'done'],
     default: 'todo'
   },
+  project: {
+    type: Schema.Types.ObjectId,
+    ref: 'Project',
+    required: true
+  },
   creator: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -26,9 +31,10 @@ const taskSchema = new Schema({
   }
 });
 
-// Populate tasks with creator's information
-taskSchema.pre(/^find/, function (next) {
+// Populate tasks with project and creator's information.
+taskSchema.pre(/^find/, function(next) {
   const task = this as any;
+  task.populate('project');
   task.populate('creator');
   next();
 });

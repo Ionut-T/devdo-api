@@ -11,6 +11,8 @@ import { AuthRouter } from './routes/auth.routes';
 import { UserRouter } from './routes/user.routes';
 import { Err } from './utils/error-handler';
 import errorController from './controllers/error.controller';
+import { ProjectRouter } from './routes/project.routes';
+import { DEV_ENV } from './utils/config';
 
 export class Application {
   public app: express.Application;
@@ -18,20 +20,22 @@ export class Application {
   private taskRouter: Router;
   private authRouter: Router;
   private userRouter: Router;
+  private projectRouter: Router;
 
   constructor() {
     this.app = express();
     this.db();
-    this.taskRouter = new TaskRouter().router;
     this.authRouter = new AuthRouter().router;
     this.userRouter = new UserRouter().router;
+    this.projectRouter = new ProjectRouter().router;
+    this.taskRouter = new TaskRouter().router;
     this.config();
     this.routes();
     this.errorHandling();
   }
 
   private config(): void {
-    if (process.env.NODE_ENV === 'development') {
+    if (DEV_ENV) {
       this.app.use(morgan('dev'));
     }
     // Set CORS
@@ -50,9 +54,11 @@ export class Application {
   }
 
   private routes(): void {
-    this.app.use('/api/v2/tasks', this.taskRouter);
     this.app.use('/api/v2/auth', this.authRouter);
     this.app.use('/api/v2/user', this.userRouter);
+    this.app.use('/api/v2/projects', this.projectRouter);
+    this.app.use('/api/v2/projects/:projectId/tasks', this.taskRouter);
+
     this.app.all('*', (req, _res, next) => next(new Err(`Can't find ${req.originalUrl}!`, 404)));
   }
 
