@@ -66,7 +66,6 @@ export const updateOne = asyncWrapper(
 export const deleteOne = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const project = await Project.findByIdAndDelete(req.params.id);
-    console.log('TCL: project', project);
 
     if (!project) {
       return next(new Err('Project not found', 404));
@@ -74,6 +73,6 @@ export const deleteOne = asyncWrapper(
 
     await Task.deleteMany({ project });
 
-    res.status(204).json({ message: 'Project deleted' });
+    res.status(204).json({ message: 'Project and tasks deleted' });
   }
 );

@@ -33,7 +33,7 @@ export const taskSchema = new Schema({
 
 // Populate tasks with project and creator's information.
 taskSchema.pre(/^find/, function(next) {
-  const task = this as any;
+  const task = this as ITask;
   task.populate('project');
   task.populate('creator');
   next();

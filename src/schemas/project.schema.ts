@@ -1,5 +1,6 @@
 import { Schema, Model, model } from 'mongoose';
 import { IProject } from '../models/project.model';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const projectSchema = new Schema({
   name: {
@@ -21,6 +22,15 @@ const projectSchema = new Schema({
     type: Date,
     default: Date.now()
   }
+});
+
+projectSchema.plugin(uniqueValidator);
+
+// Populate tasks with creator's information.
+projectSchema.pre(/^find/, function(next) {
+  const task = this as IProject;
+  task.populate('creator');
+  next();
 });
 
 export const Project: Model<IProject> = model<IProject>('Project', projectSchema);
