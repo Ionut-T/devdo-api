@@ -1,6 +1,7 @@
 import { Schema, Model, model } from 'mongoose';
 import { IProject } from '../models/project.model';
 import uniqueValidator from 'mongoose-unique-validator';
+import slugify from 'slugify';
 
 const projectSchema = new Schema({
   name: {
@@ -21,15 +22,22 @@ const projectSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now()
-  }
+  },
+  url: String
 });
 
 projectSchema.plugin(uniqueValidator);
 
+projectSchema.pre('save', function(next) {
+  const project = this as IProject;
+  project.url = slugify(project.name, { lower: true });
+  next();
+});
+
 // Populate tasks with creator's information.
 projectSchema.pre(/^find/, function(next) {
-  const task = this as IProject;
-  task.populate('creator');
+  const project = this as IProject;
+  project.populate('creator');
   next();
 });
 

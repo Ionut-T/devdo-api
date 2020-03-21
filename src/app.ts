@@ -57,7 +57,7 @@ export class Application {
     this.app.use('/api/v2/auth', this.authRouter);
     this.app.use('/api/v2/user', this.userRouter);
     this.app.use('/api/v2/projects', this.projectRouter);
-    this.app.use('/api/v2/projects/:projectId/tasks', this.taskRouter);
+    this.app.use('/api/v2/projects/:projectUrl/tasks', this.taskRouter);
 
     this.app.all('*', (req, _res, next) => next(new Err(`Can't find ${req.originalUrl}!`, 404)));
   }

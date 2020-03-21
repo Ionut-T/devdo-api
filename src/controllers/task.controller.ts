@@ -2,6 +2,7 @@ import { Task } from '../schemas/task.schema';
 import { Request, Response, NextFunction } from 'express';
 import asyncWrapper from '../utils/async-wrapper';
 import { Err } from '../utils/error-handler';
+import { Project } from '../schemas/project.schema';
 
 /**
  * Create task.
@@ -24,9 +25,10 @@ export const create = asyncWrapper(
  */
 export const findAll = asyncWrapper(
   async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    const tasks = await Task.find({ project: req.params.projectId });
+    const project = await Project.findOne({ url: req.params.projectUrl });
+    const tasks = await Task.find({ project: project.id });
 
-    res.status(200).json({ message: 'Loading tasks successfully', results: tasks.length, tasks });
+    res.status(200).json({ message: 'Loading tasks successfully', results: tasks.length, tasks, project });
   }
 );
 
