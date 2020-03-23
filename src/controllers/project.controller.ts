@@ -50,7 +50,11 @@ export const findOne = asyncWrapper(
  */
 export const updateOne = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const project = await Project.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
+    const project = await Project.findByIdAndUpdate(req.params.id, req.body, {
+      runValidators: true,
+      new: true,
+      context: 'query'
+    });
 
     if (!project) {
       return next(new Err('Project not found', 404));

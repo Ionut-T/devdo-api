@@ -26,7 +26,9 @@ const projectSchema = new Schema({
   url: String
 });
 
-projectSchema.plugin(uniqueValidator);
+projectSchema.plugin(uniqueValidator, {
+  message: 'A project with the name {VALUE} already exists. Project name must be unique!'
+});
 
 projectSchema.pre('save', function(next) {
   const project = this as IProject;
