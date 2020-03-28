@@ -9,5 +9,5 @@ enum Status {
 export interface ITask extends Document {
   title: string;
   description: string;
-  status?: Status.Todo | Status.Doing | Status.Done;
+  status?: Status;
 }

@@ -2,46 +2,57 @@ import { Task } from '../schemas/task.schema';
 import { Request, Response, NextFunction } from 'express';
 import asyncWrapper from '../utils/async-wrapper';
 import { Err } from '../utils/error-handler';
+import { Project } from '../schemas/project.schema';
 
-// Create a new task and store it into DB
+/**
+ * Create task.
+ */
 export const create = asyncWrapper(
-  async (req: Request, res: Response): Promise<Response> => {
+  async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const task = await Task.create({
       title: req.body.title,
       description: req.body.description,
+      project: req.query.projectId,
       creator: (req as any).userData.userId
     });
 
-    return res.status(201).json({ message: 'Task added successfully', task });
+    res.status(201).json({ message: 'Task added successfully', task });
   }
 );
 
-// Get all tasks from DB
+/**
+ * Find all tasks.
+ */
 export const findAll = asyncWrapper(
-  async (req: Request, res: Response): Promise<Response> => {
-    const tasks = await Task.find({ creator: (req as any).userData.userId });
+  async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
+    const project = await Project.findOne({ url: req.params.projectUrl });
+    const tasks = await Task.find({ project: project.id });
 
-    return res.status(200).json({ message: 'Loading tasks successfully', results: tasks.length, tasks });
+    res.status(200).json({ message: 'Loading tasks successfully', results: tasks.length, tasks, project });
   }
 );
 
-// Get a single task from DB
+/**
+ * Find a single task.
+ */
 export const findOne = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
-    const task = await Task.findById(req.params.id);
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const task = await Task.findById(req.params.taskId);
 
     if (!task) {
       return next(new Err('Task not found', 404));
     }
 
-    return res.status(200).json(task);
+    res.status(200).json(task);
   }
 );
 
-// Update task on DB
+/**
+ * Update one task.
+ */
 export const updateOne = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const task = await Task.findByIdAndUpdate(req.params.taskId, req.body, { runValidators: true, new: true });
 
     if (!task) {
       return next(new Err('Task not found', 404));
@@ -51,10 +62,12 @@ export const updateOne = asyncWrapper(
   }
 );
 
-// Delete task from DB
+/**
+ * Delete task.
+ */
 export const deleteOne = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
-    const task = await Task.findByIdAndDelete(req.params.id);
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const task = await Task.findByIdAndDelete(req.params.taskId);
 
     if (!task) {
       return next(new Err('Task not found', 404));
