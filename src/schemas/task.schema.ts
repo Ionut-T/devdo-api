@@ -1,5 +1,6 @@
 import { Schema, model, Model } from 'mongoose';
 import { ITask } from '../models/task.model';
+import { Status } from '../utils/enums';
 
 export const taskSchema = new Schema({
   title: {
@@ -12,8 +13,8 @@ export const taskSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ['todo', 'doing', 'done'],
-    default: 'todo'
+    enum: [Status.Todo, Status.Doing, Status.Done],
+    default: Status.Todo
   },
   project: {
     type: Schema.Types.ObjectId,
