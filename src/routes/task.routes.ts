@@ -11,15 +11,15 @@ export class TaskRouter {
   }
 
   private routes(): void {
-    // /api/v2/projects/:projectId/tasks
+    // /api/v2/projects/:projectUrl/tasks
     this.router
       .route('/')
       .post(checkAuth, create)
       .get(checkAuth, findAll);
 
-    // /api/v2/tasks/:id
+    // /api/v2/projects/:projectUrl/tasks/:id
     this.router
-      .route('/:id')
+      .route('/:taskId')
       .get(checkAuth, findOne)
       .put(checkAuth, updateOne)
       .delete(checkAuth, deleteOne);

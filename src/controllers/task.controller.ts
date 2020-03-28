@@ -12,7 +12,7 @@ export const create = asyncWrapper(
     const task = await Task.create({
       title: req.body.title,
       description: req.body.description,
-      project: req.params.projectId,
+      project: req.query.projectId,
       creator: (req as any).userData.userId
     });
 
@@ -37,7 +37,7 @@ export const findAll = asyncWrapper(
  */
 export const findOne = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findById(req.params.taskId);
 
     if (!task) {
       return next(new Err('Task not found', 404));
@@ -52,7 +52,7 @@ export const findOne = asyncWrapper(
  */
 export const updateOne = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
+    const task = await Task.findByIdAndUpdate(req.params.taskId, req.body, { runValidators: true, new: true });
 
     if (!task) {
       return next(new Err('Task not found', 404));
@@ -67,7 +67,7 @@ export const updateOne = asyncWrapper(
  */
 export const deleteOne = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const task = await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findByIdAndDelete(req.params.taskId);
 
     if (!task) {
       return next(new Err('Task not found', 404));
