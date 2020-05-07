@@ -8,11 +8,14 @@ const projectSchema = new Schema({
     type: String,
     required: true,
     trim: true,
-    unique: true
+    unique: true,
+    minlength: 3,
+    maxlength: 20
   },
   description: {
     type: String,
-    trim: true
+    trim: true,
+    maxlength: 100
   },
   creator: {
     type: Schema.Types.ObjectId,
