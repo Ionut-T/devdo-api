@@ -5,11 +5,17 @@ import { Status } from '../utils/enums';
 export const taskSchema = new Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
+    minlength: 3,
+    maxlength: 20
   },
   description: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
+    minlength: 3,
+    maxlength: 100
   },
   status: {
     type: String,

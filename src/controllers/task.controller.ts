@@ -52,7 +52,11 @@ export const findOne = asyncWrapper(
  */
 export const updateOne = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const task = await Task.findByIdAndUpdate(req.params.taskId, req.body, { runValidators: true, new: true });
+    const task = await Task.findByIdAndUpdate(req.params.taskId, req.body, {
+      runValidators: true,
+      new: true,
+      context: 'query'
+    });
 
     if (!task) {
       return next(new Err('Task not found', 404));
