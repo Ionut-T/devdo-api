@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import { check, validationResult } from 'express-validator';
 import { User } from '../schemas/user.schema';
 import asyncWrapper from '../utils/async-wrapper';
 import { Err } from '../utils/error-handler';
@@ -11,6 +12,17 @@ import { JWT_SECRET, VERIFY_EMAIL_URL, RESET_PASSWORD_URL } from '../utils/confi
 export const signup = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { firstName, email, password, confirmPassword } = req.body;
+
+    if (password) {
+      await check('confirmPassword')
+        .equals(password)
+        .run(req);
+
+      if (!validationResult(req).isEmpty()) {
+        return next(new Err('Passwords do not match.', 422));
+      }
+    }
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -124,6 +136,8 @@ export const forgotPassword = asyncWrapper(
 // Reset password.
 export const resetPassword = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { password, confirmPassword } = req.body;
+
     const token = await Token.findOne({ token: req.params.token });
 
     if (!token) {
@@ -132,8 +146,18 @@ export const resetPassword = asyncWrapper(
 
     const user = await User.findById(token.userId).select('+password');
 
-    user.password = req.body.password;
-    user.confirmPassword = req.body.confirmPassword;
+    if (password) {
+      await check('confirmPassword')
+        .equals(password)
+        .run(req);
+
+      if (!validationResult(req).isEmpty()) {
+        return next(new Err('Passwords do not match.', 422));
+      }
+    }
+
+    user.password = password;
+    user.confirmPassword = confirmPassword;
 
     await user.save();
 
