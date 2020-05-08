@@ -5,9 +5,9 @@ import Debug from 'debug';
 import { Application } from './app';
 
 const debug = Debug('devdo-api');
-const app = new Application().app;
+const { app } = new Application();
 
-const normalizePort = (val: any) => {
+const normalizePort = (val: any): any => {
   const port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -26,7 +26,7 @@ const normalizePort = (val: any) => {
 const server = http.createServer(app);
 const port = normalizePort(process.env.PORT || '3000');
 
-const onError = (error: any) => {
+const onError = (error: any): any => {
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -45,7 +45,7 @@ const onError = (error: any) => {
   }
 };
 
-const onListening = () => {
+const onListening = (): void => {
   server.address();
   const bind = typeof port === 'string' ? 'pipe ' + port : 'port ' + port;
   debug(`Listening on ${bind}`);
