@@ -6,6 +6,11 @@
     "url": "git+https://github.com/ionut-t/devDo-api.git"
   },
   "description": "devDo API",
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged && npm run lint"
+    }
+  },
   "scripts": {
     "start": "npm run watch-node",
     "serve": "node dist/server.js",
@@ -62,8 +67,10 @@
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
     "eslint": "^5.16.0",
+    "husky": "^4.2.5",
     "nodemon": "^2.0.0",
     "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
     "shelljs": "^0.8.3",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.2"
